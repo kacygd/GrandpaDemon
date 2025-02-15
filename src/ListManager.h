@@ -1,3 +1,4 @@
+/// --- File: ListManager.h ---
 #ifndef LISTMANAGER_H
 #define LISTMANAGER_H
 #include <vector>
@@ -15,20 +16,16 @@ public:
 
     inline static void parseRequestString(std::string str) {
         size_t isFound = str.find("_id");
-
         while (isFound != std::string::npos) {
             str = str.substr(isFound + 5);
             size_t findBracket = str.find("}");
-
-            if (findBracket == std::string::npos) break;  // Tránh lỗi nếu không tìm thấy dấu '}'
-
+            if (findBracket == std::string::npos) break;
             try {
                 int id = std::stoi(str.substr(0, findBracket));
                 demonIDList.push_back(id);
-            } catch (const std::exception& e) {
-                break; // Tránh lỗi khi `stoi` thất bại
+            } catch (const std::exception&) {
+                break;
             }
-
             isFound = str.find("_id");
         }
     }
@@ -41,51 +38,29 @@ public:
     }
 
     inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
-        if (pos <= 499 && pos > 249) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon0_text.png"_spr : "GrD_demon0.png"_spr);
-        }
-        if (pos <= 249 && pos > 149) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon1_text.png"_spr : "GrD_demon1.png"_spr);
-        }
-        if (pos <= 149 && pos > 74) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon2_text.png"_spr : "GrD_demon2.png"_spr);
-        }
-        if (pos <= 74 && pos > 24) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon3_text.png"_spr : "GrD_demon3.png"_spr);
-        }
-        if (pos <= 24 && pos > 0) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon4_text.png"_spr : "GrD_demon4.png"_spr);
-        }
-        if (pos == 0) {
-            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon5_text.png"_spr : "GrD_demon5.png"_spr);
-        }
+        if (pos <= 499 && pos > 249) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon0_text.png"_spr : "GrD_demon0.png"_spr);
+        if (pos <= 249 && pos > 149) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon1_text.png"_spr : "GrD_demon1.png"_spr);
+        if (pos <= 149 && pos > 74) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon2_text.png"_spr : "GrD_demon2.png"_spr);
+        if (pos <= 74 && pos > 24) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon3_text.png"_spr : "GrD_demon3.png"_spr);
+        if (pos <= 24 && pos > 0) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon4_text.png"_spr : "GrD_demon4.png"_spr);
+        if (pos == 0) return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon5_text.png"_spr : "GrD_demon5.png"_spr);
         return nullptr;
     }
 
     inline static GJSearchObject* getSearchObject(int upper, int lower) {
-        if (upper >= static_cast<int>(demonIDList.size()) || lower < 0) return nullptr; // Kiểm tra phạm vi hợp lệ
-        
+        if (upper > static_cast<int>(demonIDList.size())) upper = demonIDList.size();
+        if (lower < 0) lower = 0;
+        if (upper <= lower) return nullptr;
+
         std::stringstream download;
         bool first = true;
-
-        if (!(upper == 0 && lower == 0)) {
-            for (int i = upper - 1; i >= lower; i--) {  // Sửa lỗi logic khi lấy danh sách ID
-                if (i >= static_cast<int>(demonIDList.size()) || i < 0) continue;
-
-
-                if (!first) download << ",";
-                download << std::to_string(demonIDList[i]);
-                first = false;
-            }
-        } else if (!demonIDList.empty()) {
-            download << std::to_string(demonIDList[0]);
-        } else {
-            return nullptr; // Tránh lỗi khi demonIDList rỗng
+        for (int i = upper - 1; i >= lower; i--) {
+            if (!first) download << ",";
+            download << demonIDList[i];
+            first = false;
         }
-
         download << "&gameVersion=22";
         return GJSearchObject::create(SearchType::Type19, download.str());
     }
 };
-
 #endif
