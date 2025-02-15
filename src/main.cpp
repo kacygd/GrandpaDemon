@@ -38,7 +38,7 @@ class $modify(MenuLayer) {
         });
 
 		auto req = web::WebRequest();
-		m_fields->m_listener.setFilter(req.get("https://api.aredl.net/api/aredl/list"));
+		m_fields->m_listener.setFilter(req.get("https://cps.ps.fhgdps.com/database/pos.json"));
 
 		// if (!ListManager::firstTimeOpen) {
 		// 	web::AsyncWebRequest()
