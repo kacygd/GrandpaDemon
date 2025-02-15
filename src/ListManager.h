@@ -57,13 +57,9 @@ public:
             return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon4_text.png"_spr : "GrD_demon4.png"_spr);
         }
         if (pos == 0) {
-            if (Mod::get()->getSettingValue<bool>("grandpa-demon-disable")) {
-                return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon4_text.png"_spr : "GrD_demon4.png"_spr);
-            } else {
-                return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon5_text.png"_spr : "GrD_demon5.png"_spr);
-            }
+            return CCSprite::createWithSpriteFrameName(hasText ? "GrD_demon5_text.png"_spr : "GrD_demon5.png"_spr);
         }
-        return nullptr; // Trả về nullptr nếu không có điều kiện nào khớp
+        return nullptr;
     }
 
     inline static GJSearchObject* getSearchObject(int upper, int lower) {
@@ -73,8 +69,9 @@ public:
         bool first = true;
 
         if (!(upper == 0 && lower == 0)) {
-            for (int i = upper; i > lower; i--) {
-                if (i >= static_cast<int>(demonIDList.size())) continue; // Tránh truy cập ngoài phạm vi
+            for (int i = upper - 1; i >= lower; i--) {  // Sửa lỗi logic khi lấy danh sách ID
+                if (i >= static_cast<int>(demonIDList.size()) || i < 0) continue;
+
 
                 if (!first) download << ",";
                 download << std::to_string(demonIDList[i]);
