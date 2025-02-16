@@ -106,4 +106,3 @@ class $modify(GrDLevelBrowserLayer, LevelBrowserLayer) {
         this->m_countText->setString(fmt::format("{} to {} of 250", this->m_fields->m_currentPage * 10 + 1, this->m_fields->m_currentPage * 10 + 10).c_str());
     }
 };
-
