@@ -95,26 +95,24 @@ class ListManager {
         }
 
         inline static GJSearchObject* getSearchObject(int upper, int lower) {
+            if (demonIDList.empty()) return nullptr;
+
             std::stringstream download;
             bool first = true;
-            if (!(upper == 0 && lower == 0)) {
-                for (unsigned int i = upper; i > lower; i--) {
-                    if (!first) {
-                        download << ",";
-                    }
-                    download << std::to_string(ListManager::demonIDList.at(i));
+
+            if (upper > 0 && lower >= 0 && upper < demonIDList.size()) {
+                for (int i = upper; i > lower; i--) {
+                    if (!first) download << ",";
+                    download << std::to_string(demonIDList[i]);
                     first = false;
                 }
             } else {
-                download << std::to_string(ListManager::demonIDList.at(0));
+                download << std::to_string(demonIDList[0]);
             }
-            
-            download << "&gameVersion=22";
-            GJSearchObject* searchObj = GJSearchObject::create(SearchType::Type19, download.str());
-            return searchObj;
-        }   
 
-        
+            download << "&gameVersion=22";
+            return GJSearchObject::create(SearchType::Type19, download.str());
+        }
 };
 
 #endif
