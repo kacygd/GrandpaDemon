@@ -11,45 +11,32 @@ class $modify(GrDLevelBrowserLayer, LevelBrowserLayer) {
     };
 
     bool init(GJSearchObject* p0) {
-
         if (!ListManager::isSupremeSearching) {
-            LevelBrowserLayer::init(p0);
-            return true;
+            return LevelBrowserLayer::init(p0);
         }
 
-        if (p0->m_searchType != SearchType::Type19) {
-            LevelBrowserLayer::init(p0);
-            return true;
+        if (!p0 || p0->m_searchType != SearchType::Type19) {
+            return LevelBrowserLayer::init(p0);
         }
 
         this->m_fields->m_currentPage = 0;
-        int page = this->m_fields->m_currentPage;
-        this->m_fields->m_lowIdx = page * 10;
+        this->m_fields->m_lowIdx = 0;
 
-        LevelBrowserLayer::init(ListManager::getSearchObject(499, 489));
-        return true;
+        auto searchObj = ListManager::getSearchObject(499, 489);
+        if (!searchObj) return false;
+
+        return LevelBrowserLayer::init(searchObj);
     }
-
-    // TodoReturn loadPage(GJSearchObject* p0) {
-
-    //     if (!ListManager::isSupremeSearching) {
-    //         LevelBrowserLayer::loadPage(p0);
-    //         return;
-    //     }
-
-    //     LevelBrowserLayer::loadPage(p0);
-    //     return;
-        
-    // }
 
     void loadLevelsFinished(cocos2d::CCArray* p0, char const* p1, int p2) {
         LevelBrowserLayer::loadLevelsFinished(p0, p1, p2);
-        if (!ListManager::isSupremeSearching) {
+        if (!ListManager::isSupremeSearching || !this->m_searchObject) {
             return;
         }
         if (this->m_searchObject->m_searchType != SearchType::Type19) {
             return;
         }
+
         auto prevBtn = this->m_leftArrow;
         auto nextBtn = this->m_rightArrow;
 
@@ -67,7 +54,7 @@ class $modify(GrDLevelBrowserLayer, LevelBrowserLayer) {
 
     void onNextPage(CCObject* sender) {
         LevelBrowserLayer::onNextPage(sender);
-        if (!ListManager::isSupremeSearching) {
+        if (!ListManager::isSupremeSearching || !this->m_searchObject) {
             return;
         }
         if (this->m_searchObject->m_searchType != SearchType::Type19) {
@@ -78,31 +65,38 @@ class $modify(GrDLevelBrowserLayer, LevelBrowserLayer) {
             this->m_fields->m_currentPage += 1;
         }
         nextBtnActions();
-        
     }
 
     void onPrevPage(CCObject* sender) {
         LevelBrowserLayer::onPrevPage(sender);
-        if (!ListManager::isSupremeSearching) {
+        if (!ListManager::isSupremeSearching || !this->m_searchObject) {
             return;
         }
         if (this->m_searchObject->m_searchType != SearchType::Type19) {
             return;
         }
+
         if (this->m_fields->m_currentPage > 0) {
             this->m_fields->m_currentPage -= 1;
         }
         nextBtnActions();
-        
     }
 
     void nextBtnActions() {
         hideStuff();
-        LevelBrowserLayer::loadPage(ListManager::getSearchObject(499 - this->m_fields->m_currentPage * 10, 489 - this->m_fields->m_currentPage * 10));
+        auto searchObj = ListManager::getSearchObject(499 - this->m_fields->m_currentPage * 10, 489 - this->m_fields->m_currentPage * 10);
+        if (searchObj) {
+            LevelBrowserLayer::loadPage(searchObj);
+        }
     }
 
     void hideStuff() {
-        this->m_pageBtn->setVisible(false);
-        this->m_countText->setString(fmt::format("{} to {} of 250", this->m_fields->m_currentPage * 10 + 1, this->m_fields->m_currentPage * 10 + 10).c_str());
+        if (this->m_pageBtn) this->m_pageBtn->setVisible(false);
+        if (this->m_countText) {
+            this->m_countText->setString(fmt::format("{} to {} of 250", 
+                this->m_fields->m_currentPage * 10 + 1, 
+                this->m_fields->m_currentPage * 10 + 10).c_str()
+            );
+        }
     }
 };
