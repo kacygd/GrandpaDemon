@@ -20,7 +20,9 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
 
     bool init() {
         
-        DemonFilterSelectLayer::init();
+        if (!DemonFilterSelectLayer::init()) {
+            return false;
+        }
 
         if (ListManager::demonIDList.empty()) {
             return true;
@@ -33,9 +35,11 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
         CCARRAY_FOREACH(this->getChildren(), layerObj) {
             if (auto newObj = static_cast<CCLayer*>(layerObj)) {
                 layer = newObj;
+                break;
             }
         }
 
+        if (!layer) return false;
         CCScale9Sprite* s9spr = nullptr;
         CCLabelBMFont* label = nullptr;
         CCMenu* menu = nullptr;
@@ -51,8 +55,8 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
             }
         }
 
-
-        // Find OK Button
+        if (!s9spr || !label || !menu) return false;
+        
         CCMenuItemSpriteExtra* okButton = nullptr;
         CCObject* obj_ok;
         CCARRAY_FOREACH(menu->getChildren(), obj_ok) {
