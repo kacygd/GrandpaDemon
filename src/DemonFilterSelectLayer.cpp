@@ -40,6 +40,7 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
         }
 
         if (!layer) return false;
+
         CCScale9Sprite* s9spr = nullptr;
         CCLabelBMFont* label = nullptr;
         CCMenu* menu = nullptr;
@@ -56,7 +57,8 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
         }
 
         if (!s9spr || !label || !menu) return false;
-        
+
+        // Find OK Button
         CCMenuItemSpriteExtra* okButton = nullptr;
         CCObject* obj_ok;
         CCARRAY_FOREACH(menu->getChildren(), obj_ok) {
@@ -163,7 +165,7 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
     void onButton5(CCObject* sender) {
         ListManager::filterType = 5;
         ListManager::isSupremeSearching = false;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(1, 0));
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(0, 0));
         geode::cocos::switchToScene(browserLayer);
     }
 };
