@@ -1,3 +1,6 @@
+# v1.2.1
+* Made compatible with 2.207
+
 # v1.2.0
 * Made compatible with 2.206
 * Fixed a crash that occured when trying to search for Grandpa Demons with Grandpa Demon disabled
