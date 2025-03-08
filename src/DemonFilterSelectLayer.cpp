@@ -128,32 +128,32 @@ class $modify(GrdDemonFilterSelectLayer, DemonFilterSelectLayer) {
 
     void onButton0(CCObject* sender) {
         ListManager::filterType = 0;
-        ListManager::isSupremeSearching = true;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(349, 249)); // should go to 499
+        ListManager::isSupremeSearching = false;
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(34, 23));
         geode::cocos::switchToScene(browserLayer);
     }
     void onButton1(CCObject* sender) {
         ListManager::filterType = 1;
         ListManager::isSupremeSearching = false;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(249, 149));
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(23, 15));
         geode::cocos::switchToScene(browserLayer);
     }
     void onButton2(CCObject* sender) {
         ListManager::filterType = 2;
         ListManager::isSupremeSearching = false;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(149, 74));
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(15, 7));
         geode::cocos::switchToScene(browserLayer);
     }
     void onButton3(CCObject* sender) {
         ListManager::filterType = 3;
         ListManager::isSupremeSearching = false;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(74, 24));
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(7, 3));
         geode::cocos::switchToScene(browserLayer);
     }
     void onButton4(CCObject* sender) {
         ListManager::filterType = 4;
         ListManager::isSupremeSearching = false;
-        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(24, 0));
+        auto browserLayer = LevelBrowserLayer::create(ListManager::getSearchObject(3, 0));
         geode::cocos::switchToScene(browserLayer);
     }
     void onButton5(CCObject* sender) {
