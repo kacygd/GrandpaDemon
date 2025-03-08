@@ -20,7 +20,7 @@ class $modify(LevelCell) {
         }
 
         int aredlPos = ListManager::getPositionOfID(m_level->m_levelID);
-        if (aredlPos == -1 || aredlPos > 499) {
+        if (aredlPos == -1 || aredlPos > 35) {
             return;
         }
 
@@ -78,7 +78,7 @@ class $modify(LevelCell) {
 
         layer->addChild(newIcon);
 
-        if (aredlPos <= 24) {
+        if (aredlPos <= 4) {
             EffectsManager::addInfinitySymbol(newIcon->getPosition(), layer, aredlPos);
         }
     }
