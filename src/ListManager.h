@@ -1,120 +1,116 @@
 #ifndef LISTMANAGER_H
 #define LISTMANAGER_H
+
 #include <vector>
 #include <string>
+#include <Geode/Geode.hpp>
+#include <Geode/modify/MenuLayer.hpp>
+#include "json.hpp"
 
 using namespace geode::prelude;
+using json = nlohmann::json;
 
 class ListManager {
-    public:
-        inline static std::vector<int> demonIDList;
-        inline static bool firstTimeOpen;
-        inline static int filterType;
-        inline static bool isSupremeSearching;
+public:
+    inline static std::vector<int> demonIDList;
+    inline static bool firstTimeOpen;
+    inline static int filterType;
+    inline static bool isSupremeSearching;
 
-        inline static void parseRequestString(std::string str) {
-            size_t isFound = str.find("_id");
+    inline static void parseRequestString(const std::string& str) {
+        demonIDList.clear();
 
-            while (isFound != std::string::npos) {
-                str = str.substr(isFound + 5);
-                size_t findBracket = str.find("}");
+        try {
+            json j = json::parse(str);
 
-                int id = stoi(str.substr(0, findBracket));
-                demonIDList.push_back(id);
-
-                isFound = str.find("_id");
+            if (!j.is_array()) {
+                FLAlertLayer::create("Error", "pos.json is not an array!", "OK")->show();
+                return;
             }
-        }
+            for (const auto& item : j) {
+                if (!item.is_object() || !item.contains("level_id")) {
+                    FLAlertLayer::create("Error", "Invalid item in pos.json!", "OK")->show();
+                    return;
+                }
 
-        inline static int getPositionOfID(int id) {
-            for (unsigned int i = 0; i < demonIDList.size(); i++) {
-                if (demonIDList.at(i) == id) return i;
+                auto level_id = item["level_id"];
+                if (!level_id.is_number_integer()) {
+                    FLAlertLayer::create("Error", "level_id must be an integer!", "OK")->show();
+                    return;
+                }
+                demonIDList.push_back(level_id.get<int>());
             }
-
-            return -1;
+            if (demonIDList.empty()) {
+                FLAlertLayer::create("Error", "No levels found in pos.json!", "OK")->show();
+            }
+        } catch (const json::exception& e) {
+            FLAlertLayer::create("Error", "Failed to parse pos.json! " + std::string(e.what()), "OK")->show();
+            return;
         }
+    }
 
-        inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
-            if (pos <= 499 &&
-                pos > 249) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon0_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon0.png"_spr);
-                    }
-                }
-
-            if (pos <= 249 &&
-                pos > 149) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon1_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon1.png"_spr);
-                    }
-                }
-
-            if (pos <= 149 &&
-                pos > 74) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon2_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon2.png"_spr);
-                    }
-                }
-            if (pos <= 74 &&
-                pos > 24) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon3_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon3.png"_spr);
-                    }
-                }
-            if (pos <= 24 &&
-                pos > 0) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
-                    }
-                }
-            if (pos == 0) {
-                if ((Mod::get()->getSettingValue<bool>("grandpa-demon-disable"))) {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
-                    }
-                } else {
-                    if (hasText) {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon5_text.png"_spr);
-                    } else {
-                        return CCSprite::createWithSpriteFrameName("GrD_demon5.png"_spr);
-                    }
-                }
-            } 
+    inline static int getPositionOfID(int id) {
+        for (unsigned int i = 0; i < demonIDList.size(); i++) {
+            if (demonIDList.at(i) == id) return i;
         }
+        return -1;
+    }
 
-        inline static GJSearchObject* getSearchObject(int upper, int lower) {
-            std::stringstream download;
-            bool first = true;
-            if (!(upper == 0 && lower == 0)) {
-                for (unsigned int i = upper; i > lower; i--) {
-                    if (!first) {
-                        download << ",";
-                    }
-                    download << std::to_string(ListManager::demonIDList.at(i));
-                    first = false;
-                }
+    inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
+        if (pos <= 34 && pos >= 24) {
+            return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon0_text.png"_spr)
+                           : CCSprite::createWithSpriteFrameName("GrD_demon0.png"_spr);
+        }
+        if (pos <= 23 && pos >= 16) {
+            return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon1_text.png"_spr)
+                           : CCSprite::createWithSpriteFrameName("GrD_demon1.png"_spr);
+        }
+        if (pos <= 15 && pos >= 8) {
+            return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon2_text.png"_spr)
+                           : CCSprite::createWithSpriteFrameName("GrD_demon2.png"_spr);
+        }
+        if (pos <= 7 && pos >= 4) {
+            return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon3_text.png"_spr)
+                           : CCSprite::createWithSpriteFrameName("GrD_demon3.png"_spr);
+        }
+        if (pos <= 3 && pos > 0) {
+            return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr)
+                           : CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
+        }
+        if (pos == 0) {
+            if (Mod::get()->getSettingValue<bool>("grandpa-demon-disable")) {
+                return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon4_text.png"_spr)
+                               : CCSprite::createWithSpriteFrameName("GrD_demon4.png"_spr);
             } else {
-                download << std::to_string(ListManager::demonIDList.at(0));
+                return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon5_text.png"_spr)
+                               : CCSprite::createWithSpriteFrameName("GrD_demon5.png"_spr);
             }
-            
-            download << "&gameVersion=22";
-            GJSearchObject* searchObj = GJSearchObject::create(SearchType::Type19, download.str());
-            return searchObj;
-        }   
+        }
+        return CCSprite::create();
+    }
 
-        
+    inline static GJSearchObject* getSearchObject(int upper, int lower) {
+        std::stringstream download;
+        bool first = true;
+        if (!(upper == 0 && lower == 0)) {
+            for (unsigned int i = upper; i > lower; i--) {
+                if (!first) {
+                    download << ",";
+                }
+                if (i < demonIDList.size()) {
+                    download << std::to_string(demonIDList.at(i));
+                }
+                first = false;
+            }
+        } else {
+            if (!demonIDList.empty()) {
+                download << std::to_string(demonIDList.at(0));
+            }
+        }
+
+        download << "&gameVersion=22";
+        return GJSearchObject::create(SearchType::Type19, download.str());
+    }
 };
 
 #endif
