@@ -57,7 +57,7 @@ public:
     }
 
     inline static CCSprite* getSpriteFromPosition(int pos, bool hasText) {
-        if (pos <= 34 && pos >= 24) {
+        if (pos <= 35 && pos >= 24) {
             return hasText ? CCSprite::createWithSpriteFrameName("GrD_demon0_text.png"_spr)
                            : CCSprite::createWithSpriteFrameName("GrD_demon0.png"_spr);
         }
